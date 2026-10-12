@@ -12,6 +12,7 @@ export const user = p.pgTable("user", {
 
 export const userSchema = createInsertSchema(user)
 export type UserSchema = z.infer<typeof userSchema>
+export type UpdateUserSchema = Partial<UserSchema>
 
 export const categoryEnum = p.pgEnum("category", ["income", "expense"])
 
