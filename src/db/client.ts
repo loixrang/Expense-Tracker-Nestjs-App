@@ -10,5 +10,5 @@ if (!databaseUrl) {
 
 const pool = new Pool({connectionString: databaseUrl})
 
-export const db = drizzle({client: pool})
+export const db = drizzle({client: pool, casing: 'snake_case'})
 export type DB = typeof db

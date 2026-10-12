@@ -22,18 +22,21 @@
     "test:e2e": "vitest run --config ./vitest.config.e2e.ts",
     "db:generate": "bunx drizzle-kit generate",
     "db:migrate": "bunx drizzle-kit migrate",
-    "db:update": "bun db:generate && bun db:migrate"
+    "db:update": "bun db:generate && bun db:migrate",
+    "db:seed": "bun src/db/seed.ts"
   },
   "dependencies": {
     "@nestjs/common": "^12.0.1",
     "@nestjs/core": "^12.0.1",
     "@nestjs/platform-express": "^12.0.1",
-    "drizzle-orm": "^1.0.0-rc.4",
+    "dotenv": "^18.0.7",
+    "drizzle-orm": "^0.45.4",
+    "drizzle-seed": "^0.3.1",
+    "drizzle-zod": "^0.8.3",
     "pg": "^8.23.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
-    "zod": "^4.6.6",
-    "dotenv": "^18.0.7"
+    "zod": "^4.6.6"
   },
   "devDependencies": {
     "@nestjs/cli": "^12.0.0",
@@ -45,7 +48,7 @@
     "@types/pg": "^8.23.1",
     "@types/supertest": "^7.0.0",
     "@vitest/coverage-v8": "^4.1.2",
-    "drizzle-kit": "^1.0.0-rc.4",
+    "drizzle-kit": "^0.31.11",
     "oxlint": "^1.58.0",
     "oxlint-tsgolint": "^7.0.2001",
     "prettier": "^3.4.2",

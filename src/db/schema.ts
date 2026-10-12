@@ -1,8 +1,8 @@
 import * as p from "drizzle-orm/pg-core"
-import { createInsertSchema } from "drizzle-orm/zod"
+import { createInsertSchema } from "drizzle-zod"
 import z from "zod"
 
-export const user = p.snakeCase.table("user", {
+export const user = p.pgTable("user", {
   id: p.integer().generatedAlwaysAsIdentity().notNull().primaryKey(),
   name: p.varchar({length: 256}).notNull(),
   email: p.varchar({length: 256}).notNull().unique(),
@@ -15,7 +15,7 @@ export type UserSchema = z.infer<typeof userSchema>
 
 export const categoryEnum = p.pgEnum("category", ["income", "expense"])
 
-export const categories = p.snakeCase.table("categories", {
+export const categories = p.pgTable("categories", {
   id: p.integer().generatedAlwaysAsIdentity().notNull().primaryKey(),
   userId: p.integer().references(() => user.id),
   name: p.varchar({length: 255}).notNull(),
@@ -26,7 +26,7 @@ export const categories = p.snakeCase.table("categories", {
 export const categorySchema = createInsertSchema(categories)
 export type CategorySchema = z.infer<typeof categorySchema>
 
-export const transactions = p.snakeCase.table("transactions", {
+export const transactions = p.pgTable("transactions", {
   id: p.integer().generatedAlwaysAsIdentity().primaryKey(),
   userId: p.integer().references(() => user.id),
   categoryId: p.integer().references(() => categories.id),
