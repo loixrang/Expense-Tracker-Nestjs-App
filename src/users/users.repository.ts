@@ -37,16 +37,28 @@ export class UsersRepository {
   }
 
   async findAllUsers() {
-    const allUsers = await this.dbService.db.select().from(user);
+    const allUsers = await this.dbService.db
+      .select({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        createdAt: user.createdAt,
+      })
+      .from(user);
     return allUsers;
   }
 
   async findOneUser(id: number) {
     const singleUser = await this.dbService.db
-      .select()
+      .select({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        createdAt: user.createdAt,
+      })
       .from(user)
       .where(eq(user.id, id));
 
-      return singleUser
+    return singleUser;
   }
 }

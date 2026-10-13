@@ -5,10 +5,11 @@ import { DbModule } from './db/db.module.js';
 import { UsersModule } from './users/users.module.js';
 import { TransactionsModule } from './transactions/transactions.module.js';
 import { CategoriesModule } from './categories/categories.module.js';
+import { AuthModule } from './auth/auth.module.js';
 
 @Module({
   controllers: [AppController],
   providers: [AppService],
-  imports: [DbModule, UsersModule, TransactionsModule, CategoriesModule],
+  imports: [DbModule, UsersModule, TransactionsModule, CategoriesModule, AuthModule],
 })
 export class AppModule {}
