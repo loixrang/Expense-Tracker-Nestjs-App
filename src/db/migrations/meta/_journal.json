@@ -8,6 +8,13 @@
       "when": 1791841761506,
       "tag": "0000_handy_rattler",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791891032187,
+      "tag": "0001_fair_shinobi_shaw",
+      "breakpoints": true
     }
   ]
 }
