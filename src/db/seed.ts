@@ -1,6 +1,6 @@
 import { seed } from "drizzle-seed";
 import { db } from "./client.js";
-import * as Schema from "./schema.js"
+import * as Schema from "./schema/index.js"
 
 async function main() {
   await seed(db, Schema).refine((f) => ({
