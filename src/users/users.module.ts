@@ -8,6 +8,6 @@ import { UsersRepository } from './users.repository.js';
   imports: [DbModule],
   controllers: [UsersController],
   providers: [UsersService, UsersRepository],
-  exports: [UsersRepository, UsersService],
+  exports: [UsersRepository],
 })
 export class UsersModule {}
