@@ -8,6 +8,17 @@ import { SignJWT } from 'jose';
 @Injectable()
 export class AuthService {
   constructor(private readonly userRepository: UsersRepository) {}
+
+  async generateToken(userId: number) {
+    const secretValue = process.env.JWT_SECRET;
+
+    if (!secretValue || secretValue.length < 32) {
+      throw new Error("JWT_SECRET must contain a random secret");
+    }
+    const secret = new TextEncoder().encode(secretValue)
+    return new SignJWT({}).setProtectedHeader({alg: 'HS256'}).setSubject(String(userId)).setIssuedAt().setExpirationTime('1h').sign(secret)
+  }
+
   async create(createUser: registerUserDto) {
     const userSafe = registerSchema.safeParse(createUser);
     if (!userSafe.success) {
@@ -39,13 +50,8 @@ export class AuthService {
     if (!existing || !await argon2.verify(existing.password, sucess.password)) {
       throw new UnauthorizedException('User not registered');
     }
-    const secretValue = process.env.JWT_SECRET;
-
-    if (!secretValue || secretValue.length < 32) {
-      throw new Error("JWT_SECRET must contain a random secret");
-    }
-    const secret = new TextEncoder().encode(secretValue)
-    const token = await new SignJWT({}).setProtectedHeader({alg: 'HS256'}).setSubject(String(existing.id)).setIssuedAt().setExpirationTime('1h').sign(secret)
+    
+    const token = await this.generateToken(existing.id)
 
     return {user: {
       name: existing.name,
