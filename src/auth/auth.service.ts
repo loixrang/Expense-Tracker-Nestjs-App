@@ -39,6 +39,17 @@ export class AuthService {
     if (!existing || !await argon2.verify(existing.password, sucess.password)) {
       throw new UnauthorizedException('User not registered');
     }
-    const token = await new SignJWT({}).setProtectedHeader({alg: 'HS256'}).setSubject(String(existing.id)).setIssuedAt().setExpirationTime('1h')
+    const secretValue = process.env.JWT_SECRET;
+
+    if (!secretValue || secretValue.length < 32) {
+      throw new Error("JWT_SECRET must contain a random secret");
+    }
+    const secret = new TextEncoder().encode(secretValue)
+    const token = await new SignJWT({}).setProtectedHeader({alg: 'HS256'}).setSubject(String(existing.id)).setIssuedAt().setExpirationTime('1h').sign(secret)
+
+    return {user: {
+      name: existing.name,
+      email: existing.email
+    }, token}
   }
 }
