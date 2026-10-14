@@ -7,7 +7,6 @@ export const transactions = p.pgTable('transactions', {
   userId: p.integer().references(() => user.id),
   categoryId: p.integer().references(() => categories.id),
   amount: p.integer().notNull(),
-  type: categoryEnum().notNull(),
   description: p.varchar({ length: 255 }),
   occuredAt: p
     .timestamp({ mode: 'string', withTimezone: true })

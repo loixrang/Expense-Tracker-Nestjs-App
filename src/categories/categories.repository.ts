@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DbService } from '../db/db.service.js';
 import { categories } from '../db/schema/category.schema.js';
-import { CategoryEnumSchema, CreateCategoryDto } from './dto/create-category.dto.js';
+import { CreateCategoryDto } from './dto/create-category.dto.js';
 import { UpdateCategoryDto } from './dto/update-category.dto.js';
 import { and, eq } from 'drizzle-orm';
 import { FindCategoryDto } from './dto/find-customer.dto.js';
@@ -16,14 +16,14 @@ export class CategoriesRepository {
     return this.database.db.select().from(categories).orderBy(categories.id).limit(query.limit).offset(query.page);
   }
   async findType(query: FindCategoryDto) {
-    if (typeof query.type === 'string') {
+    if (query.type) {
       const catType = await this.database.db.select().from(categories).where(eq(categories.type, query.type)).limit(query.limit).offset((query.page - 1) * query.limit).orderBy(categories.id)
       return catType ?? null
     }
     return null
   }
   async findMyType(query: FindCategoryDto, id: number) {
-    if (typeof query.type === 'string') {
+    if (query.type) {
       const catType = await this.database.db.select().from(categories).where(and(eq(categories.type, query.type), eq(categories.userId, id))).limit(query.limit).offset((query.page - 1) * query.limit).orderBy(categories.id)
       return catType ?? null
     }

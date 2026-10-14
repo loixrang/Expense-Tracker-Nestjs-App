@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CategoriesRepository } from './categories.repository.js';
-import { categoryEnumSchema, CategoryEnumSchema, CreateCategoryDto, createCategorySchema } from './dto/create-category.dto.js';
-import { UpdateCategoryDto, updateCategorySchema } from './dto/update-category.dto.js';
+import { CreateCategoryDto } from './dto/create-category.dto.js';
+import { UpdateCategoryDto } from './dto/update-category.dto.js';
 import { FindCategoryDto } from './dto/find-customer.dto.js';
 
 @Injectable()
