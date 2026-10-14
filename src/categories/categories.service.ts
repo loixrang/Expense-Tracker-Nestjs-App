@@ -19,11 +19,7 @@ export class CategoriesService {
     return this.categoryRepo.getMyCategories(id)
   }
   async create(createCategoryDto: CreateCategoryDto, userId: number) {
-    const categorySafe = createCategorySchema.safeParse(createCategoryDto);
-    if (!categorySafe.success) 
-      throw new BadRequestException(categorySafe.error.issues)
-    const parsedCategory = categorySafe.data;
-    const createdCategory = await this.categoryRepo.create(parsedCategory, userId)
+    const createdCategory = await this.categoryRepo.create(createCategoryDto, userId)
     if (!createdCategory) 
       throw new InternalServerErrorException("Can't complete task")
 
@@ -47,12 +43,8 @@ export class CategoriesService {
     }
     return foundId
   }
-  async update(updateCategoryDto: UpdateCategoryDto, id: number, gen: boolean) {
-    const updateSafe = updateCategorySchema.safeParse(updateCategoryDto)
-      if (!updateSafe.success)
-        throw new BadRequestException(updateSafe.error.issues)
-      const validatedUpdate = updateSafe.data
-      const updatedCategory = await this.categoryRepo.update(validatedUpdate, id, gen)
+  async update(updateCategoryDto: UpdateCategoryDto, id: number, gen: boolean, userId?: number) {
+      const updatedCategory = await this.categoryRepo.update(updateCategoryDto, id, gen, userId)
       if (!updatedCategory)
         throw new InternalServerErrorException("Can't update category")
       return updatedCategory

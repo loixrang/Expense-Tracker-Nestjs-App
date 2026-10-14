@@ -1,11 +1,10 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards, UsePipes } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
-import { type CreateCategoryDto } from './dto/create-category.dto.js';
+import { createCategorySchema, type CreateCategoryDto } from './dto/create-category.dto.js';
 import { CurrentUser } from '../decorators/current-user.decorator.js';
 import { type AuthUser } from '../types/express.js';
 import { CategoriesService } from './categories.service.js';
-import {type UpdateCategoryDto } from './dto/update-category.dto.js';
-import type {CategoryEnumSchema} from "./dto/create-category.dto.js"
+import {updateCategorySchema, type UpdateCategoryDto } from './dto/update-category.dto.js';
 import { ZodValidationPipes } from '../pipes/zod-validation.pipe.js';
 import { type FindCategoryDto, findCategorySchema } from './dto/find-customer.dto.js';
 
@@ -14,7 +13,7 @@ import { type FindCategoryDto, findCategorySchema } from './dto/find-customer.dt
 export class CategoriesController {
   constructor (private readonly categoryService: CategoriesService){}
   @Post('me')
-  createCategory(@Body() createCategoryDto: CreateCategoryDto, @CurrentUser() user: AuthUser) {
+  createCategory(@Body(new ZodValidationPipes(createCategorySchema)) createCategoryDto: CreateCategoryDto, @CurrentUser() user: AuthUser) {
     return this.categoryService.create(createCategoryDto, user.id)
   }
 
@@ -33,12 +32,12 @@ export class CategoriesController {
     return this.categoryService.getCategory(id)
   }
 
-  @Patch('me')
-  updateMyCat(@Body() updateCategoryDto: UpdateCategoryDto, @CurrentUser() user: AuthUser) {
-    return this.categoryService.update(updateCategoryDto, user.id, false)
+  @Patch('me/:id')
+  updateMyCat(@Param('id', ParseIntPipe) id: number, @Body(new ZodValidationPipes(updateCategorySchema)) updateCategoryDto: UpdateCategoryDto, @CurrentUser() user: AuthUser) {
+    return this.categoryService.update(updateCategoryDto, id, false, user.id)
   }
   @Patch(':id')
-  update(@Body() updateCategoryDto: UpdateCategoryDto, @Param('id', ParseIntPipe) id: number) {
+  update(@Body(new ZodValidationPipes(updateCategorySchema)) updateCategoryDto: UpdateCategoryDto, @Param('id', ParseIntPipe) id: number) {
     return this.categoryService.update(updateCategoryDto, id, true)
   }
   @Delete(':id')
