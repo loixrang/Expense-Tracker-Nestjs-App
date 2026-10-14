@@ -2,9 +2,11 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { UsersRepository } from './users.repository.js';
 import { UpdateUserDto, updateUserSchema } from './dto/update-user.dto.js';
+import { Request } from 'express';
 
 @Injectable()
 export class UsersService {
@@ -22,7 +24,7 @@ export class UsersService {
     return singleUser
   }
 
-  async updateUser(id: number, updatedUserDto: UpdateUserDto) {
+  async updateUser(id: number, updatedUserDto: UpdateUserDto, req: Request) {
     const updateSafe = updateUserSchema.safeParse(updatedUserDto)
     if (!updateSafe.success) {
       throw new BadRequestException(updateSafe.error.issues)
@@ -34,9 +36,9 @@ export class UsersService {
         throw new ConflictException('Email already registered');
       }
     }
-    const completed = this.userRepository.updateUser(validated, id)
-    if (!completed) {
-      throw new BadRequestException('Task not found')
+    const completed = await this.userRepository.updateUser(validated, id, req)
+    if (!completed.length) {
+      throw new UnauthorizedException(`Can't edit user of id: ${id}`)
     }
     return completed
   }

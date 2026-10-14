@@ -5,6 +5,7 @@ import * as argon2 from "argon2"
 import { loginSchema, LoginSchemaDto } from './dto/login.dto.js';
 import { SignJWT } from 'jose';
 import { ConfigService } from '@nestjs/config';
+import { Request } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -53,5 +54,9 @@ export class AuthService {
       name: existing.name,
       email: existing.email
     }, token}
+  }
+
+  async getMe(req: Request) {
+    return await this.userRepository.findOneUser(req.user!.id)
   }
 }
