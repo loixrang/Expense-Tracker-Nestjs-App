@@ -2,18 +2,15 @@ import { BadRequestException, Injectable, InternalServerErrorException, NotFound
 import { CategoriesRepository } from './categories.repository.js';
 import { categoryEnumSchema, CategoryEnumSchema, CreateCategoryDto, createCategorySchema } from './dto/create-category.dto.js';
 import { UpdateCategoryDto, updateCategorySchema } from './dto/update-category.dto.js';
+import { FindCategoryDto } from './dto/find-customer.dto.js';
 
 @Injectable()
 export class CategoriesService {
   constructor (private readonly categoryRepo: CategoriesRepository){}
 
-  async getMyCategory(id: number, type?: CategoryEnumSchema ) {
-    if (type) {
-      const typeSafe = categoryEnumSchema.safeParse(type)
-      if (!typeSafe.success) 
-      throw new BadRequestException(typeSafe.error.issues)
-      const parsedCategory = typeSafe.data;
-      const findType = await this.categoryRepo.findType(parsedCategory)
+  async getMyCategory(id: number, query: FindCategoryDto ) {
+    if (query.type) {
+      const findType = await this.categoryRepo.findMyType(query, id)
       if (!findType) {
         throw new NotFoundException("Category type not found")
       }
@@ -32,19 +29,15 @@ export class CategoriesService {
 
     return createdCategory
   }
-  async getAllCategories (type?: CategoryEnumSchema) {
-    if (type) {
-      const typeSafe = categoryEnumSchema.safeParse(type)
-      if (!typeSafe.success) 
-      throw new BadRequestException(typeSafe.error.issues)
-      const parsedCategory = typeSafe.data;
-      const findType = await this.categoryRepo.findType(parsedCategory)
+  async getAllCategories (query: FindCategoryDto) {
+    if (query.type) {
+      const findType = await this.categoryRepo.findType(query)
       if (!findType) {
         throw new NotFoundException("Category type not found")
       }
       return findType
     }
-    return this.categoryRepo.getCategories()
+    return this.categoryRepo.getCategories(query)
   }
 
   async getCategory(id: number) {
