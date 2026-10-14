@@ -56,7 +56,7 @@ export class AuthService {
     }, token}
   }
 
-  async getMe(req: Request) {
-    return await this.userRepository.findOneUser(req.user!.id)
+  async getMe(id: number) {
+    return await this.userRepository.findOneUser(id)
   }
 }

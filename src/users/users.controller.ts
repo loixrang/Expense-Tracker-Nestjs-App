@@ -2,7 +2,8 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, Query, ParseIntPipe,
 import { UsersService } from './users.service.js';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
 import type { UpdateUserDto } from './dto/update-user.dto.js';
-import type { Request } from 'express';
+import { CurrentUser } from '../decorators/current-user.decorator.js';
+import type { AuthUser } from '../types/express.js';
 
 @Controller('users')
 export class UsersController {
@@ -20,7 +21,7 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
-  update(@Param('id') id:string, @Body() updateUserDto: UpdateUserDto, @Req() req: Request) {
-    return this.userService.updateUser(+id, updateUserDto, req)
+  update(@Param('id') id:string, @Body() updateUserDto: UpdateUserDto, @CurrentUser() user: AuthUser) {
+    return this.userService.updateUser(+id, updateUserDto, user.id)
   }
 }

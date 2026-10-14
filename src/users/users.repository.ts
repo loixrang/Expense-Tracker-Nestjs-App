@@ -4,7 +4,6 @@ import { user } from '../db/schema/user.schema.js';
 import { and, eq } from 'drizzle-orm';
 import { registerUserDto } from '../auth/dto/register.dto.js';
 import { UpdateUserDto } from './dto/update-user.dto.js';
-import { Request } from 'express';
 
 @Injectable()
 export class UsersRepository {
@@ -64,7 +63,7 @@ export class UsersRepository {
     return singleUser ?? null;
   }
 
-  async updateUser(validatedUser: UpdateUserDto, id: number, req: Request) {
+  async updateUser(validatedUser: UpdateUserDto, id: number, userId: number) {
     const validUser = validatedUser;
     const updateUser = await this.dbService.db
       .update(user)
@@ -72,7 +71,7 @@ export class UsersRepository {
         name: validUser.name,
         email: validUser.email,
       })
-      .where(and(eq(user.id, id), eq(user.id, req.user!.id)))
+      .where(and(eq(user.id, id), eq(user.id, userId)))
       .returning({
         id: user.id,
         name: user.name,

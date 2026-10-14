@@ -4,6 +4,8 @@ import type { LoginSchemaDto } from './dto/login.dto.js';
 import { AuthService } from './auth.service.js';
 import { JwtAuthGuard } from './guards/jwt-auth.guard.js';
 import { type Request } from 'express';
+import { CurrentUser } from '../decorators/current-user.decorator.js';
+import type { AuthUser } from '../types/express.js';
 
 @Controller('auth')
 export class AuthController {
@@ -20,7 +22,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get("me")
-  getMe(@Req() req: Request) {
-    return this.authService.getMe(req)
+  getMe(@CurrentUser() user: AuthUser) {
+    return this.authService.getMe(user.id)
   }
 }
