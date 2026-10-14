@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DbService } from '../db/db.service.js';
-import { user } from '../db/schema/user.js';
+import { user } from '../db/schema/user.schema.js';
 import { and, eq } from 'drizzle-orm';
 import { registerUserDto } from '../auth/dto/register.dto.js';
 import { UpdateUserDto } from './dto/update-user.dto.js';
@@ -66,15 +66,19 @@ export class UsersRepository {
 
   async updateUser(validatedUser: UpdateUserDto, id: number, req: Request) {
     const validUser = validatedUser;
-    const updateUser = await this.dbService.db.update(user).set({
-      name: validUser.name,
-      email: validUser.email,
-    }).where(and(eq(user.id, id), eq(user.id, req.user!.id))).returning({
-      id: user.id,
-      name: user.name,
-      email: user.email
-    })
+    const updateUser = await this.dbService.db
+      .update(user)
+      .set({
+        name: validUser.name,
+        email: validUser.email,
+      })
+      .where(and(eq(user.id, id), eq(user.id, req.user!.id)))
+      .returning({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      });
 
-    return updateUser ?? null
+    return updateUser ?? null;
   }
 }

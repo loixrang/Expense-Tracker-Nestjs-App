@@ -1,5 +1,5 @@
 import * as p from 'drizzle-orm/pg-core';
-import { user } from './user.js';
+import { user } from './user.schema.js';
 
 export const categoryEnum = p.pgEnum('category', ['income', 'expense']);
 
