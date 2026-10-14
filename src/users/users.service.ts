@@ -3,9 +3,8 @@ import {
   ConflictException,
   Injectable,
 } from '@nestjs/common';
-import { SignJWT, jwtVerify } from 'jose';
-import * as argon2 from 'argon2';
 import { UsersRepository } from './users.repository.js';
+import { UpdateUserDto, updateUserSchema } from './dto/update-user.dto.js';
 
 @Injectable()
 export class UsersService {
@@ -21,5 +20,24 @@ export class UsersService {
       throw new BadRequestException(`No user of ${id} found`)
     }
     return singleUser
+  }
+
+  async updateUser(id: number, updatedUserDto: UpdateUserDto) {
+    const updateSafe = updateUserSchema.safeParse(updatedUserDto)
+    if (!updateSafe.success) {
+      throw new BadRequestException(updateSafe.error.issues)
+    }
+    const validated = updateSafe.data
+    if (validated.email) {
+      const existing = await this.userRepository.findByEmail(validated.email);
+      if (existing) {
+        throw new ConflictException('Email already registered');
+      }
+    }
+    const completed = this.userRepository.updateUser(validated, id)
+    if (!completed) {
+      throw new BadRequestException('Task not found')
+    }
+    return completed
   }
 }
