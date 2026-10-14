@@ -6,6 +6,21 @@ import { UpdateCategoryDto, updateCategorySchema } from './dto/update-category.d
 @Injectable()
 export class CategoriesService {
   constructor (private readonly categoryRepo: CategoriesRepository){}
+
+  async getMyCategory(id: number, type?: CategoryEnumSchema ) {
+    if (type) {
+      const typeSafe = categoryEnumSchema.safeParse(type)
+      if (!typeSafe.success) 
+      throw new BadRequestException(typeSafe.error.issues)
+      const parsedCategory = typeSafe.data;
+      const findType = await this.categoryRepo.findType(parsedCategory)
+      if (!findType) {
+        throw new NotFoundException("Category type not found")
+      }
+      return findType
+    }
+    return this.categoryRepo.getMyCategories(id)
+  }
   async create(createCategoryDto: CreateCategoryDto, userId: number) {
     const categorySafe = createCategorySchema.safeParse(createCategoryDto);
     if (!categorySafe.success) 
@@ -17,7 +32,7 @@ export class CategoriesService {
 
     return createdCategory
   }
-  async getCategories (type?: CategoryEnumSchema) {
+  async getAllCategories (type?: CategoryEnumSchema) {
     if (type) {
       const typeSafe = categoryEnumSchema.safeParse(type)
       if (!typeSafe.success) 
@@ -32,14 +47,43 @@ export class CategoriesService {
     return this.categoryRepo.getCategories()
   }
 
-  async update(updateCategoryDto: UpdateCategoryDto, id: number) {
+  async getCategory(id: number) {
+    const foundId = await this.categoryRepo.findId(id)
+    if (!foundId) {
+      throw new NotFoundException('Category id not found')
+    }
+    return foundId
+  }
+  async update(updateCategoryDto: UpdateCategoryDto, id: number, gen: boolean) {
     const updateSafe = updateCategorySchema.safeParse(updateCategoryDto)
-    if (!updateSafe.success)
-      throw new BadRequestException(updateSafe.error.issues)
-    const validatedUpdate = updateSafe.data
-    const updatedCategory = await this.categoryRepo.update(validatedUpdate, id)
-    if (!updatedCategory)
-      throw new InternalServerErrorException("Can't update category")
-    return updatedCategory
+      if (!updateSafe.success)
+        throw new BadRequestException(updateSafe.error.issues)
+      const validatedUpdate = updateSafe.data
+      const updatedCategory = await this.categoryRepo.update(validatedUpdate, id, gen)
+      if (!updatedCategory)
+        throw new InternalServerErrorException("Can't update category")
+      return updatedCategory
+  }
+
+  async deleteMyCat(id: number, userId: number) {
+    const deleteCat = await this.categoryRepo.delete(id, false, userId)
+    if (!deleteCat?.length) {
+      throw new BadRequestException('Category not found')
+    }
+    return {
+      message: "Deleted Succesfully",
+      deleteCat
+    }
+  }
+
+  async delete(id: number) {
+    const deletedCat = await this.categoryRepo.delete(id, true)
+    if (!deletedCat?.length) {
+      throw new BadRequestException('Category not found')
+    }
+    return {
+      message: "Deleted Succesfully",
+      deletedCat
+    }
   }
 }

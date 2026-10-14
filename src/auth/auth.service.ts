@@ -5,7 +5,6 @@ import * as argon2 from "argon2"
 import { loginSchema, LoginSchemaDto } from './dto/login.dto.js';
 import { SignJWT } from 'jose';
 import { ConfigService } from '@nestjs/config';
-import { Request } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -13,7 +12,7 @@ export class AuthService {
 
   async generateToken(userId: number) {
     const secret = new TextEncoder().encode(this.config.getOrThrow<string>('JWT_SECRET'))
-    return new SignJWT({}).setProtectedHeader({alg: 'HS256'}).setSubject(String(userId)).setIssuedAt().setExpirationTime('1h').sign(secret)
+    return new SignJWT({}).setProtectedHeader({alg: 'HS256'}).setSubject(String(userId)).setIssuedAt().setExpirationTime('1d').sign(secret)
   }
 
   async create(createUser: registerUserDto) {
