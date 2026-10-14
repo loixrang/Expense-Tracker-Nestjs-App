@@ -4,18 +4,14 @@ import { registerSchema, registerUserDto } from './dto/register.dto.js';
 import * as argon2 from "argon2"
 import { loginSchema, LoginSchemaDto } from './dto/login.dto.js';
 import { SignJWT } from 'jose';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly userRepository: UsersRepository) {}
+  constructor(private readonly userRepository: UsersRepository, private readonly config: ConfigService) {}
 
   async generateToken(userId: number) {
-    const secretValue = process.env.JWT_SECRET;
-
-    if (!secretValue || secretValue.length < 32) {
-      throw new Error("JWT_SECRET must contain a random secret");
-    }
-    const secret = new TextEncoder().encode(secretValue)
+    const secret = new TextEncoder().encode(this.config.getOrThrow<string>('JWT_SECRET'))
     return new SignJWT({}).setProtectedHeader({alg: 'HS256'}).setSubject(String(userId)).setIssuedAt().setExpirationTime('1h').sign(secret)
   }
 

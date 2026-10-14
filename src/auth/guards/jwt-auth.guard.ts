@@ -5,9 +5,11 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { jwtVerify } from 'jose';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
+  constructor(private readonly config: ConfigService) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const authorization = request.headers.authorization;
@@ -19,12 +21,7 @@ export class JwtAuthGuard implements CanActivate {
     const token = authorization.slice(7);
 
     try {
-      const secretValue = process.env.JWT_SECRET;
-
-      if (!secretValue || secretValue.length < 32) {
-        throw new Error('JWT_SECRET must contain a random secret');
-      }
-      const secret = new TextEncoder().encode(secretValue);
+      const secret = new TextEncoder().encode(this.config.getOrThrow<string>('JWT_SECRET'));
 
       const { payload } = await jwtVerify(token, secret, {
         algorithms: ['HS256'],
