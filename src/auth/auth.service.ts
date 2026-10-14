@@ -45,7 +45,7 @@ export class AuthService {
     const sucess = loginSafe.data
     const existing = await this.userRepository.findByEmail(sucess.email)
     if (!existing || !await argon2.verify(existing.password, sucess.password)) {
-      throw new UnauthorizedException('User not registered');
+      throw new UnauthorizedException('Invalid email or password');
     }
     
     const token = await this.generateToken(existing.id)

@@ -23,7 +23,7 @@ export class UsersService {
     return singleUser
   }
 
-  async updateUser(id: number, updatedUserDto: UpdateUserDto, userId: number) {
+  async updateUser(updatedUserDto: UpdateUserDto, userId: number) {
     const updateSafe = updateUserSchema.safeParse(updatedUserDto)
     if (!updateSafe.success) {
       throw new BadRequestException(updateSafe.error.issues)
@@ -35,9 +35,9 @@ export class UsersService {
         throw new ConflictException('Email already registered');
       }
     }
-    const completed = await this.userRepository.updateUser(validated, id, userId)
+    const completed = await this.userRepository.updateUser(validated, userId)
     if (!completed.length) {
-      throw new UnauthorizedException(`Can't edit user of id: ${id}`)
+      throw new UnauthorizedException(`Can't edit user`)
     }
     return completed
   }

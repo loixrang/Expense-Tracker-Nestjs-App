@@ -20,8 +20,8 @@ export class UsersController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Patch(':id')
-  update(@Param('id') id:string, @Body() updateUserDto: UpdateUserDto, @CurrentUser() user: AuthUser) {
-    return this.userService.updateUser(+id, updateUserDto, user.id)
+  @Patch('/me')
+  update(@Body() updateUserDto: UpdateUserDto, @CurrentUser() user: AuthUser) {
+    return this.userService.updateUser(updateUserDto, user.id)
   }
 }
