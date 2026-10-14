@@ -1,3 +1,5 @@
-import { CreateCategoryDto } from "./create-category.dto.js";
+import z from 'zod'
+import { createCategorySchema } from "./create-category.dto.js";
 
-export type UpdateTransactionDto = Partial<CreateCategoryDto>
+export const updateCategorySchema = createCategorySchema.partial()
+export type UpdateCategoryDto = z.infer<typeof updateCategorySchema>
