@@ -1,6 +1,6 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CategoriesRepository } from './categories.repository.js';
-import { CreateCategoryDto, createCategorySchema } from './dto/create-category.dto.js';
+import { categoryEnumSchema, CategoryEnumSchema, CreateCategoryDto, createCategorySchema } from './dto/create-category.dto.js';
 import { UpdateCategoryDto, updateCategorySchema } from './dto/update-category.dto.js';
 
 @Injectable()
@@ -17,7 +17,18 @@ export class CategoriesService {
 
     return createdCategory
   }
-  async getCategories () {
+  async getCategories (type?: CategoryEnumSchema) {
+    if (type) {
+      const typeSafe = categoryEnumSchema.safeParse(type)
+      if (!typeSafe.success) 
+      throw new BadRequestException(typeSafe.error.issues)
+      const parsedCategory = typeSafe.data;
+      const findType = await this.categoryRepo.findType(parsedCategory)
+      if (!findType) {
+        throw new NotFoundException("Category type not found")
+      }
+      return findType
+    }
     return this.categoryRepo.getCategories()
   }
 
