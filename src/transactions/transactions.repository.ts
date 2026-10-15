@@ -51,13 +51,12 @@ export class TransactionsRepository {
 
     return categoryId
   }
-
-  async createTransaction(createTransDto: CreateTransactionDto, id?:number) {
+  async createTransaction(createTransDto: CreateTransactionDto, id:number) {
     const [newTransaction] = await this.database.db.insert(transactions).values({
       amount: createTransDto.amount,
       description: createTransDto.description,
       categoryId: createTransDto.categoryId,
-      ...(id !== undefined && {userId: id})
+      userId: id
     }).returning()
 
     return newTransaction

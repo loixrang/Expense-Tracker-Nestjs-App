@@ -42,12 +42,7 @@ export class TransactionsController {
   createMyTransaction(@Body(new ZodValidationPipes(createTransactionSchema)) createMyTrans: CreateTransactionDto, @CurrentUser() user: AuthUser) {
     return this.transactionService.createTransaction(createMyTrans, user.id)
   }
-
-  @Roles(Role.CUSTOMER)
-  @Post()
-  createTransaction(@Body(new ZodValidationPipes(createTransactionSchema)) createTrans: CreateTransactionDto) {
-    return this.transactionService.createTransaction(createTrans)
-  }
+  
   @Roles(Role.CUSTOMER)
   @Patch('me/:id')
   updateMyCat(@Param('id', ParseIntPipe) id: number, @Body(new ZodValidationPipes(updateTransactionSchema)) updateTransactionDto: UpdateTransactionDto, @CurrentUser() user: AuthUser) {

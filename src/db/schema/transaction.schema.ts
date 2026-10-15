@@ -4,11 +4,11 @@ import { categories, categoryEnum } from './category.schema.js';
 
 export const transactions = p.pgTable('transactions', {
   id: p.integer().generatedAlwaysAsIdentity().primaryKey(),
-  userId: p.integer().references(() => user.id),
+  userId: p.integer().references(() => user.id).notNull(),
   categoryId: p.integer().references(() => categories.id).notNull(),
   amount: p.integer().notNull(),
   description: p.varchar({ length: 255 }),
-  occuredAt: p
+  occurredAt: p
     .timestamp({ mode: 'string', withTimezone: true })
     .notNull()
     .defaultNow(),

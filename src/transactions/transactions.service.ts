@@ -19,7 +19,7 @@ export class TransactionsService {
     return found
   }
 
-  async createTransaction(createTransDto: CreateTransactionDto, id?: number) {
+  async createTransaction(createTransDto: CreateTransactionDto, id: number) {
     const checkCatId = await this.transactRepo.findCategory(createTransDto)
 
     if (!checkCatId) {
