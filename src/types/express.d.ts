@@ -1,6 +1,8 @@
 import 'express';
+import { ROLES } from '../auth/roles/role.enum.ts';
 export interface AuthUser {
-  id: number
+  id: number,
+  role: ROLES
 }
 
 declare global {

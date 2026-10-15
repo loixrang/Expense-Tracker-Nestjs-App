@@ -7,11 +7,15 @@ import { CategoriesService } from './categories.service.js';
 import {updateCategorySchema, type UpdateCategoryDto } from './dto/update-category.dto.js';
 import { ZodValidationPipes } from '../pipes/zod-validation.pipe.js';
 import { type FindCategoryDto, findCategorySchema } from './dto/find-customer.dto.js';
+import { RolesGuard } from '../auth/guards/role.guard.js';
+import { Roles } from '../decorators/roles.decorators.js';
+import { Role } from '../auth/roles/role.enum.js';
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('categories')
 export class CategoriesController {
   constructor (private readonly categoryService: CategoriesService){}
+  @Roles(Role.CUSTOMER)
   @Post('me')
   createCategory(@Body(new ZodValidationPipes(createCategorySchema)) createCategoryDto: CreateCategoryDto, @CurrentUser() user: AuthUser) {
     return this.categoryService.create(createCategoryDto, user.id)

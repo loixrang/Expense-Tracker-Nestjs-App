@@ -12,14 +12,15 @@ import {user as users} from '../../db/schema/user.schema.js';
 import { eq } from 'drizzle-orm';
 import { AuthUser } from '../../types/express.js';
 interface AuthenticatedRequests extends Request {
-  user?: AuthUser
+  user?: AuthUser,
+  
 }
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
   constructor(private readonly config: ConfigService, private readonly database: DbService) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest<AuthenticatedRequests>();
     const authorization = request.headers.authorization;
 
     if (!authorization?.startsWith('Bearer')) {
@@ -54,7 +55,7 @@ export class JwtAuthGuard implements CanActivate {
     }
 
     //attach the currrent role to the request
-      request.user = {id: userId, role: user.role}
+      request.user = {id: user.id, role: user.role}
       return true
   }
 }
