@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1791841761506,
-      "tag": "0000_handy_rattler",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1791891032187,
-      "tag": "0001_fair_shinobi_shaw",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1792015139130,
-      "tag": "0002_confused_sabretooth",
+      "when": 1792059292586,
+      "tag": "0000_warm_payback",
       "breakpoints": true
     }
   ]

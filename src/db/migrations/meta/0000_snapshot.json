@@ -1,5 +1,5 @@
 {
-  "id": "1df9a930-2baf-4a41-95e3-fa8d465540e8",
+  "id": "78fbb8f4-803b-49d3-a454-c3d09326829b",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -113,13 +113,6 @@
           "primaryKey": false,
           "notNull": true
         },
-        "type": {
-          "name": "type",
-          "type": "category",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true
-        },
         "description": {
           "name": "description",
           "type": "varchar(255)",
@@ -209,8 +202,15 @@
           "primaryKey": false,
           "notNull": true
         },
-        "password_hash": {
-          "name": "password_hash",
+        "role": {
+          "name": "role",
+          "type": "user_role",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'CUSTOMER'"
+        },
+        "password": {
+          "name": "password",
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
@@ -247,6 +247,15 @@
       "values": [
         "income",
         "expense"
+      ]
+    },
+    "public.user_role": {
+      "name": "user_role",
+      "schema": "public",
+      "values": [
+        "ADMIN",
+        "STAFF",
+        "CUSTOMER"
       ]
     }
   },
