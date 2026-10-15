@@ -16,7 +16,7 @@ export class CategoriesService {
       }
       return findType
     }
-    return this.categoryRepo.getMyCategories(id)
+    return this.categoryRepo.getMyCategories(query, id)
   }
   async create(createCategoryDto: CreateCategoryDto, userId: number) {
     const createdCategory = await this.categoryRepo.create(createCategoryDto, userId)

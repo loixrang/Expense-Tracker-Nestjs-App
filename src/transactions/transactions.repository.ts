@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { DbService } from "../db/db.service.js";
 import { FindTransactionDto } from "./dto/find-transaction.dts.js";
 import { transactions } from "../db/schema/transaction.schema.js";
@@ -40,6 +40,16 @@ export class TransactionsRepository {
     const [getById] = await this.database.db.select().from(transactions).where(and(...conditions))
 
     return getById
+  }
+
+  async findCategory(createTransDto: CreateTransactionDto, id?:number) {
+    const conditions = [eq(categories.id, createTransDto.categoryId)]
+    if (id !== undefined) {
+      conditions.push(eq(categories.userId, id))
+    }
+    const [categoryId] = await this.database.db.select({categoryId: categories.id}).from(categories).where(and(...conditions)).limit(1) 
+
+    return categoryId
   }
 
   async createTransaction(createTransDto: CreateTransactionDto, id?:number) {

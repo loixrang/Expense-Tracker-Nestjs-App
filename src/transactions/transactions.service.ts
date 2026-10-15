@@ -20,9 +20,18 @@ export class TransactionsService {
   }
 
   async createTransaction(createTransDto: CreateTransactionDto, id?: number) {
+    const checkCatId = await this.transactRepo.findCategory(createTransDto)
+
+    if (!checkCatId) {
+      throw new NotFoundException(
+        "Category not found or does not belong to you",
+      );
+    }
+
     const create = await this.transactRepo.createTransaction(createTransDto, id)
-    if (!create)
+    if (!create)  {
       throw new InternalServerErrorException()
+    }
     return create
   }
   async update(updateTransactionDto: UpdateTransactionDto, id: number, userId?: number) {

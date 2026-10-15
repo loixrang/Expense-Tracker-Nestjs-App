@@ -9,12 +9,13 @@ import { FindCategoryDto } from './dto/find-customer.dto.js';
 @Injectable()
 export class CategoriesRepository {
   constructor(private readonly database: DbService) {}
-  async getMyCategories(userId: number) {
-    const [myCategory] = await this.database.db.select().from(categories).where(eq(categories.userId, userId)).orderBy(categories.id)
+  async getMyCategories(query: FindCategoryDto, userId: number) {
+    const myCategory = await this.database.db.select().from(categories).where(eq(categories.userId, userId)).orderBy(categories.id).limit(query.limit).offset((query.page - 1) * query.limit)
+
     return myCategory
   }
   async getCategories(query: FindCategoryDto) {
-    const [allCategory] = await this.database.db.select().from(categories).orderBy(categories.id).limit(query.limit).offset(query.page);
+    const allCategory = await this.database.db.select().from(categories).orderBy(categories.id).limit(query.limit).offset(query.page);
 
     return allCategory
   }
