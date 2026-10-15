@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { DbService } from "../db/db.service.js";
 import { FindTransactionDto } from "./dto/find-transaction.dts.js";
 import { transactions } from "../db/schema/transaction.schema.js";

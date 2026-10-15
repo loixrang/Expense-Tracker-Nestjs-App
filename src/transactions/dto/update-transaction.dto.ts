@@ -1,4 +1,3 @@
-import { CreateTransactionDto } from "./create-transaction.dto.js";
 import { createTransactionSchema } from "./create-transaction.dto.js";
 import z from "zod";
 

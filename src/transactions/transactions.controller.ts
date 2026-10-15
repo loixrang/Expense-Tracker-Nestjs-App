@@ -27,7 +27,7 @@ export class TransactionsController {
   }
   @Roles(Role.ADMIN, Role.STAFF)
   @Get(':id')
-  getTransById(@Param('id', ParseIntPipe) id: number, @Query(new ZodValidationPipes(findTransactionSchema)) query: FindTransactionDto) {
+  getTransById(@Param('id', ParseIntPipe) id: number) {
     return this.transactionService.getTransById(id)
   }
 

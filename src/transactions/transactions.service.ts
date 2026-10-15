@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { FindTransactionDto } from './dto/find-transaction.dts.js';
 import { TransactionsRepository } from './transactions.repository.js';
 import { CreateTransactionDto } from './dto/create-transaction.dto.js';

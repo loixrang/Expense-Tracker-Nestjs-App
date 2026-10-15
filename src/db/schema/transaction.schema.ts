@@ -1,6 +1,6 @@
 import * as p from 'drizzle-orm/pg-core';
 import { user } from './user.schema.js';
-import { categories, categoryEnum } from './category.schema.js';
+import { categories } from './category.schema.js';
 
 export const transactions = p.pgTable('transactions', {
   id: p.integer().generatedAlwaysAsIdentity().primaryKey(),
