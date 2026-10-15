@@ -33,6 +33,7 @@ export class TransactionsController {
   createTransaction(@Body(new ZodValidationPipes(createTransactionSchema)) createTrans: CreateTransactionDto) {
     return this.transactionService.createTransaction(createTrans, false)
   }
+  @UseGuards(JwtAuthGuard)
   @Patch('me/:id')
   updateMyCat(@Param('id', ParseIntPipe) id: number, @Body(new ZodValidationPipes(updateTransactionSchema)) updateTransactionDto: UpdateTransactionDto, @CurrentUser() user: AuthUser) {
     return this.transactionService.update(updateTransactionDto, id, user.id)
@@ -45,6 +46,7 @@ export class TransactionsController {
   delete(@Param('id', ParseIntPipe) id: number) {
     return this.transactionService.delete(id)
   }
+  @UseGuards(JwtAuthGuard)
   @Delete('me/:id')
   deleteMyCat(@Param('id', ParseIntPipe) id: number, @CurrentUser() user: AuthUser) {
     return this.transactionService.deleteMyTrans(id, user.id)
