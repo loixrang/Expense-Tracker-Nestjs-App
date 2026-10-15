@@ -21,7 +21,7 @@ export class CategoriesService {
   async create(createCategoryDto: CreateCategoryDto, userId: number) {
     const createdCategory = await this.categoryRepo.create(createCategoryDto, userId)
     if (!createdCategory) 
-      throw new InternalServerErrorException("Can't complete task")
+      throw new InternalServerErrorException()
 
     return createdCategory
   }

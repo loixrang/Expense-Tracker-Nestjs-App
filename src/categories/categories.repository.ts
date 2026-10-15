@@ -3,44 +3,49 @@ import { DbService } from '../db/db.service.js';
 import { categories } from '../db/schema/category.schema.js';
 import { CreateCategoryDto } from './dto/create-category.dto.js';
 import { UpdateCategoryDto } from './dto/update-category.dto.js';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, SQL } from 'drizzle-orm';
 import { FindCategoryDto } from './dto/find-customer.dto.js';
 
 @Injectable()
 export class CategoriesRepository {
   constructor(private readonly database: DbService) {}
   async getMyCategories(userId: number) {
-    return this.database.db.select().from(categories).where(eq(categories.userId, userId)).orderBy(categories.id)
+    const [myCategory] = await this.database.db.select().from(categories).where(eq(categories.userId, userId)).orderBy(categories.id)
+    return myCategory
   }
   async getCategories(query: FindCategoryDto) {
-    return this.database.db.select().from(categories).orderBy(categories.id).limit(query.limit).offset(query.page);
+    const [allCategory] = await this.database.db.select().from(categories).orderBy(categories.id).limit(query.limit).offset(query.page);
+
+    return allCategory
   }
   async findType(query: FindCategoryDto) {
-    if (query.type) {
-      const catType = await this.database.db.select().from(categories).where(eq(categories.type, query.type)).limit(query.limit).offset((query.page - 1) * query.limit).orderBy(categories.id)
-      return catType ?? null
+    const conditions: SQL[] = []
+    if (query.type !== undefined) {
+      conditions.push(eq(categories.type, query.type))
     }
-    return null
+      const catType = await this.database.db.select().from(categories).where(and(...conditions)).limit(query.limit).offset((query.page - 1) * query.limit).orderBy(categories.id)
+      return catType
   }
   async findMyType(query: FindCategoryDto, id: number) {
-    if (query.type) {
-      const catType = await this.database.db.select().from(categories).where(and(eq(categories.type, query.type), eq(categories.userId, id))).limit(query.limit).offset((query.page - 1) * query.limit).orderBy(categories.id)
-      return catType ?? null
+    const conditions: SQL[] = [eq(categories.userId, id)]
+    if (query.type !== undefined) {
+      conditions.push(eq(categories.type, query.type))
     }
-    return null
+      const catType = await this.database.db.select().from(categories).where(and(...conditions)).limit(query.limit).offset((query.page - 1) * query.limit).orderBy(categories.id)
+      return catType
   }
   async findId(id: number) {
-    const findCatId = await this.database.db.select().from(categories).where(eq(categories.id, id))
-    return findCatId ?? null
+    const [findCatId] = await this.database.db.select().from(categories).where(eq(categories.id, id))
+    return findCatId
   }
-  async create(parsedCategory: CreateCategoryDto, id: number) {
-    const createCat = await this.database.db.insert(categories).values({
+  async create(parsedCategory: CreateCategoryDto, UserId: number) {
+    const [createCat] = await this.database.db.insert(categories).values({
       name: parsedCategory.name,
       type: parsedCategory.type,
-      userId: id
+      userId: UserId
     }).returning()
 
-    return createCat ?? null
+    return createCat
   }
   async update(validatedUpdate: UpdateCategoryDto, id: number, gen: boolean, userId?: number) {
     if (gen === true) {

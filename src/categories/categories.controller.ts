@@ -20,12 +20,12 @@ export class CategoriesController {
   createCategory(@Body(new ZodValidationPipes(createCategorySchema)) createCategoryDto: CreateCategoryDto, @CurrentUser() user: AuthUser) {
     return this.categoryService.create(createCategoryDto, user.id)
   }
-
+  @Roles(Role.ADMIN, Role.STAFF)
   @Get()
   getAllCategories(@Query(new ZodValidationPipes(findCategorySchema)) query: FindCategoryDto) {
     return this.categoryService.getAllCategories(query)
   }
-
+  @Roles(Role.CUSTOMER)
   @Get('me')
   getMyCat(@CurrentUser() user: AuthUser, @Query(new ZodValidationPipes(findCategorySchema)) query: FindCategoryDto ) {
     return this.categoryService.getMyCategory(user.id, query)
@@ -36,6 +36,7 @@ export class CategoriesController {
     return this.categoryService.getCategory(id)
   }
 
+  @Roles(Role.CUSTOMER)
   @Patch('me/:id')
   updateMyCat(@Param('id', ParseIntPipe) id: number, @Body(new ZodValidationPipes(updateCategorySchema)) updateCategoryDto: UpdateCategoryDto, @CurrentUser() user: AuthUser) {
     return this.categoryService.update(updateCategoryDto, id, false, user.id)
@@ -48,6 +49,8 @@ export class CategoriesController {
   delete(@Param('id', ParseIntPipe) id: number) {
     return this.categoryService.delete(id)
   }
+
+  @Roles(Role.CUSTOMER)
   @Delete('me/:id')
   deleteMyCat(@Param('id', ParseIntPipe) id: number, @CurrentUser() user: AuthUser) {
     return this.categoryService.deleteMyCat(id, user.id)
