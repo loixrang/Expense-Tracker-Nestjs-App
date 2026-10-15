@@ -2,6 +2,7 @@ import { BadRequestException, Injectable, InternalServerErrorException } from '@
 import { FindTransactionDto } from './dto/find-transaction.dts.js';
 import { TransactionsRepository } from './transactions.repository.js';
 import { CreateTransactionDto } from './dto/create-transaction.dto.js';
+import { UpdateTransactionDto } from './dto/update-transaction.dto.js';
 
 @Injectable()
 export class TransactionsService {
@@ -28,5 +29,33 @@ export class TransactionsService {
     if (!create)
       throw new InternalServerErrorException("Can't complete task")
     return create
+  }
+  async update(updateTransactionDto: UpdateTransactionDto, id: number, userId?: number) {
+        const updatedTransaction = await this.transactRepo.update(updateTransactionDto, id, userId)
+        if (!updatedTransaction)
+          throw new InternalServerErrorException("Can't update category")
+        return updatedTransaction
+    }
+  
+  async deleteMyTrans(id: number, userId: number) {
+    const deleteTrans = await this.transactRepo.delete(id, userId)
+    if (!deleteTrans) {
+      throw new BadRequestException('Category not found')
+    }
+    return {
+      message: "Deleted Succesfully",
+      deleteTrans
+    }
+  }
+
+  async delete(id: number) {
+    const deletedTrans = await this.transactRepo.delete(id)
+    if (!deletedTrans) {
+      throw new BadRequestException('Category not found')
+    }
+    return {
+      message: "Deleted Succesfully",
+      deletedTrans
+    }
   }
 }

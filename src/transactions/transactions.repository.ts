@@ -5,6 +5,7 @@ import { transactions } from "../db/schema/transaction.schema.js";
 import { and,eq } from "drizzle-orm";
 import { CreateTransactionDto } from "./dto/create-transaction.dto.js";
 import { categories } from "../db/schema/category.schema.js";
+import { UpdateTransactionDto } from "./dto/update-transaction.dto.js";
 
 @Injectable()
 export class TransactionsRepository {
@@ -24,8 +25,8 @@ export class TransactionsRepository {
     const conditions = [eq(transactions.id, id)];
 
     if (userId !== undefined) {
-    conditions.push(eq(transactions.userId, userId));
-  }
+      conditions.push(eq(transactions.userId, userId));
+    }
     const [getById] = await this.database.db.select().from(transactions).where(and(...conditions))
 
     return getById ?? null
@@ -45,5 +46,28 @@ export class TransactionsRepository {
     }).returning()
 
     return created ?? null
+  }
+  async update(validatedUpdate: UpdateTransactionDto, id: number, userId?: number) {
+    const conditions = [eq(transactions.id, id)];
+
+    if (userId !== undefined) {
+      conditions.push(eq(transactions.userId, userId));
+    }
+    const [updateTrans] = await this.database.db.update(transactions).set({
+      amount: validatedUpdate.amount,
+      description: validatedUpdate.description
+    }).where(and(...conditions)).returning()
+
+    return updateTrans ?? null
+  }
+  async delete(id: number, userId?: number ) {
+    const conditions = [eq(transactions.id, id)];
+
+    if (userId !== undefined) {
+      conditions.push(eq(transactions.userId, userId));
+    }
+    const [deleteTrans] = await this.database.db.delete(transactions).where(and(...conditions)).returning()
+
+    return deleteTrans ?? null
   }
 }
