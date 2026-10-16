@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { DbService } from '../db/db.service.js';
 import { user } from '../db/schema/user.schema.js';
 import { eq } from 'drizzle-orm';
-import { registerUserDto } from '../auth/dto/register.dto.js';
+import { RegisterUserDto } from '../auth/dto/register.dto.js';
 import { UpdateUserDto } from './dto/update-user.dto.js';
+import { Role } from '../auth/roles/role.enum.js';
 
 @Injectable()
 export class UsersRepository {
@@ -16,16 +17,18 @@ export class UsersRepository {
       .where(eq(user.email, email))
       .limit(1);
 
-    return result ?? null;
+    return result
   }
 
-  async create({ name, email, password }: registerUserDto) {
-    const [createdUser] = await this.dbService.db
+  async createStaff(registerStaffDto: RegisterUserDto) {
+
+    const [createdStaff] = await this.dbService.db
       .insert(user)
       .values({
-        name: name,
-        email: email,
-        password: password,
+        name: registerStaffDto.name,
+        email: registerStaffDto.email,
+        password: registerStaffDto.password,
+        role: Role.STAFF
       })
       .onConflictDoNothing({ target: user.email })
       .returning({
@@ -34,7 +37,25 @@ export class UsersRepository {
         email: user.email,
       });
 
-    return createdUser ?? null;
+    return createdStaff
+  }
+
+  async create(registerUserDto: RegisterUserDto) {
+    const [createdUser] = await this.dbService.db
+      .insert(user)
+      .values({
+        name: registerUserDto.name,
+        email: registerUserDto.email,
+        password: registerUserDto.password,
+      })
+      .onConflictDoNothing({ target: user.email })
+      .returning({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      });
+
+    return createdUser
   }
 
   async findAllUsers() {

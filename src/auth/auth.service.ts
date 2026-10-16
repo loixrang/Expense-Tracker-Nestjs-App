@@ -1,6 +1,6 @@
 import { BadRequestException, ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersRepository } from '../users/users.repository.js';
-import { registerSchema, registerUserDto } from './dto/register.dto.js';
+import { RegisterUserDto } from './dto/register.dto.js';
 import * as argon2 from "argon2"
 import { loginSchema, LoginSchemaDto } from './dto/login.dto.js';
 import { SignJWT } from 'jose';
@@ -15,25 +15,32 @@ export class AuthService {
     return new SignJWT({}).setProtectedHeader({alg: 'HS256'}).setSubject(String(userId)).setIssuedAt().setExpirationTime('1d').sign(secret)
   }
 
-  async create(createUser: registerUserDto) {
-    const userSafe = registerSchema.safeParse(createUser);
-    if (!userSafe.success) {
-      throw new BadRequestException(userSafe.error.issues);
-    }
-    const parsedUser = userSafe.data;
-    const existing = await this.userRepository.findByEmail(parsedUser.email);
+  async createStaff(createStaff: RegisterUserDto) {
+    const existing = await this.userRepository.findByEmail(createStaff.email);
     if (existing) {
       throw new ConflictException('Email already registered');
     }
-    const passwordHash = await argon2.hash(parsedUser.password, {
+    const passwordHash = await argon2.hash(createStaff.password, {
       type: argon2.argon2id,
     });
 
-    return await this.userRepository.create({
-      name: parsedUser.name,
-      email: parsedUser.email,
-      password: passwordHash,
+    const values: RegisterUserDto = {name: createStaff.name, email: createStaff.email, password: passwordHash}
+
+    return await this.userRepository.createStaff(values)
+  }
+
+  async create(createUser: RegisterUserDto) {
+    const existing = await this.userRepository.findByEmail(createUser.email);
+    if (existing) {
+      throw new ConflictException('Email already registered');
+    }
+    const passwordHash = await argon2.hash(createUser.password, {
+      type: argon2.argon2id,
     });
+
+    const values: RegisterUserDto = {name: createUser.name, email: createUser.email, password: passwordHash}
+
+    return await this.userRepository.create(values);
   }
 
   async login (loginUser: LoginSchemaDto) {

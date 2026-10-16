@@ -13,7 +13,8 @@ import { ReportsModule } from './reports/reports.module.js';
   controllers: [AppController],
   providers: [AppService],
   imports: [DbModule, UsersModule, TransactionsModule, CategoriesModule, AuthModule, ConfigModule.forRoot({
-    isGlobal: true
+    isGlobal: true,
+    envFilePath: '.env'
   }), ReportsModule],
 })
 export class AppModule {}

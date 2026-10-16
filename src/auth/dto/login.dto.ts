@@ -1,7 +1,7 @@
-import { registerSchema } from "./register.dto.js";
+import { registerUserSchema } from "./register.dto.js";
 import z from "zod";
 
-export const loginSchema = registerSchema.pick({
+export const loginSchema = registerUserSchema.pick({
   email: true,
   password: true,
 })
