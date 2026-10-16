@@ -23,10 +23,10 @@
     "db:generate": "bunx drizzle-kit generate",
     "db:migrate": "bunx drizzle-kit migrate",
     "db:update": "bun db:generate && bun db:migrate",
-    "db:seed": "bun src/db/seed.ts"
+    "db:seed": "bun src/db/seed.ts",
+    "bootstrap:admin": "bun src/scripts/bootstrap-admin.ts"
   },
   "dependencies": {
-    "@jest/globals": "^30.5.2",
     "@nestjs/common": "^12.0.1",
     "@nestjs/config": "^12.0.1",
     "@nestjs/core": "^12.0.1",

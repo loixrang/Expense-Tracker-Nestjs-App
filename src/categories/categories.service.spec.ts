@@ -1,17 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CategoriesService } from './categories.service.js';
 import { CategoriesRepository } from './categories.repository.js';
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 
 describe('CategoriesService', () => {
   let service: CategoriesService;
 
   const mockRepository = {
-    findAll: jest.fn<CategoriesRepository['getCategories']>(),
+    findAll: vi.fn<CategoriesRepository['getCategories']>(),
   };
 
   beforeEach(async () => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
